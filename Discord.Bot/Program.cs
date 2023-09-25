@@ -1,5 +1,6 @@
-﻿namespace Discord.Bot.BotActions;
+﻿namespace Discord.Bot;
 
+using Discord.Bot.BotActions;
 using Discord.Bot.BotActions.Configuration;
 using Discord.Interactions;
 using Discord.WebSocket;
