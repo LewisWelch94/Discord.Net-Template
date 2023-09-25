@@ -32,6 +32,7 @@ public class DiscordEventListener
         Client.Ready += OnReadyAsync;
         Client.MessageReceived += OnMessageReceivedAsync;
         Client.SlashCommandExecuted += OnSlashCommandExecutedAsync;
+        Client.UserVoiceStateUpdated += OnUserVoiceStateupdate;
 
         return Task.CompletedTask;
     }
@@ -50,4 +51,7 @@ public class DiscordEventListener
 
     private Task OnSlashCommandExecutedAsync(SocketSlashCommand arg)
     => Mediator.Publish(new SlashCommandNotification(arg), _cancellationToken);
+
+    private Task OnUserVoiceStateupdate(SocketUser user, SocketVoiceState oldState, SocketVoiceState newState)
+    => Mediator.Publish(new UserVoiceStateNotification(user, oldState, newState), _cancellationToken);
 }
