@@ -1,8 +1,8 @@
 ﻿namespace Discord.Bot.BotActions.Handlers.UserHandlers;
 
 using Discord.Bot.BotActions.Notifications.UserNotifications;
+using Discord.Bot.UserActions;
 using MediatR;
-using System.Reactive;
 
 public class UserBannedHandler : INotificationHandler<UserBannedNotification>
 {
