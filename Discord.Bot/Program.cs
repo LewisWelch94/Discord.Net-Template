@@ -35,7 +35,7 @@ public static class Bot
         {
             AlwaysDownloadUsers = true,
             MessageCacheSize = 100,
-            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent,
+            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers | GatewayIntents.GuildBans,
             LogLevel = LogSeverity.Info
         }))
         .AddSingleton<DiscordEventListener>()
