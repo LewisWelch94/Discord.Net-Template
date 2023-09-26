@@ -1,4 +1,4 @@
-﻿namespace Discord.Bot;
+﻿namespace Discord.Bot.UserActions;
 
 using Discord.Bot.BotActions.Interfaces;
 using Discord.Bot.BotActions.Notifications.UserNotifications;
