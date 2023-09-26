@@ -49,7 +49,8 @@ public class DiscordEventListener
         var channel = arg.Channel.GetType();
         var message = arg as SocketUserMessage;
         if (channel == typeof(SocketDMChannel)) return Mediator.Publish(new DMMessageReceivedNotification(message!), CancellationToken);
-        return Mediator.Publish(new MessageReceivedNotification(message!), CancellationToken);
+        if (channel == typeof(SocketGuildChannel)) return Mediator.Publish(new MessageReceivedNotification(message!), CancellationToken);
+        return Task.Run(() => Console.WriteLine(""));
     }
 
     private Task OnReadyAsync()
