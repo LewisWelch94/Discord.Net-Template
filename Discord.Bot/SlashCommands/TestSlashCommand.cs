@@ -2,7 +2,7 @@
 
 using Discord;
 using Discord.Bot.BotActions.Interfaces;
-using Discord.Bot.BotActions.Notifications;
+using Discord.Bot.BotActions.Notifications.CommandNotifications;
 
 public class TestSlashCommand : ISlashCommand
 {

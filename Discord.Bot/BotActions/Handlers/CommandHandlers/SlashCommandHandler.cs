@@ -1,6 +1,6 @@
-﻿namespace Discord.Bot.BotActions.Handlers;
+﻿namespace Discord.Bot.BotActions.Handlers.CommandHandlers;
 
-using Discord.Bot.BotActions.Notifications;
+using Discord.Bot.BotActions.Notifications.CommandNotifications;
 using Discord.Bot.SlashCommands;
 using MediatR;
 
