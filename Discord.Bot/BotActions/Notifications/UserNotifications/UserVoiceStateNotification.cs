@@ -1,4 +1,4 @@
-﻿namespace Discord.Bot.BotActions.Notifications;
+﻿namespace Discord.Bot.BotActions.Notifications.UserNotifications;
 
 using Discord.WebSocket;
 using MediatR;

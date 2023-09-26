@@ -1,8 +1,8 @@
 ﻿namespace Discord.Bot.BotActions.Interfaces;
 
-using Discord.Bot.BotActions.Notifications;
+using Discord.Bot.BotActions.Notifications.MessageRecievedNotification;
 
-public interface IMessageRecieved
+public interface IGuildRecieved
 {
     Task Execute(MessageReceivedNotification notification);
 }

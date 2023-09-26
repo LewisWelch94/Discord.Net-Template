@@ -20,7 +20,7 @@ public static class RegisterSlashCommand
                 await client.CreateGlobalApplicationCommandAsync(newCommand);
                 Console.WriteLine($"{newCommand.Name} has been registered");
             }
-            catch (ApplicationCommandException e)
+            catch (HttpException e)
             {
                 var json = JsonConvert.SerializeObject(e.Errors, Formatting.Indented);
                 Console.WriteLine(json);

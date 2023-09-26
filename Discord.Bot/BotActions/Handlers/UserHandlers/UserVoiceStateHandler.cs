@@ -1,6 +1,6 @@
-﻿namespace Discord.Bot.BotActions.Handlers;
+﻿namespace Discord.Bot.BotActions.Handlers.UserHandlers;
 
-using Discord.Bot.BotActions.Notifications;
+using Discord.Bot.BotActions.Notifications.UserNotifications;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
