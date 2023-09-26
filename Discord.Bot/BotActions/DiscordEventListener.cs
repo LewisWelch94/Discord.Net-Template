@@ -1,11 +1,13 @@
 ﻿namespace Discord.Bot.BotActions;
 
 using Discord.Bot.BotActions.Notifications;
+using Discord.Bot.BotActions.Notifications.CommandNotifications;
 using Discord.Bot.BotActions.Notifications.MessageRecievedNotification;
 using Discord.Bot.BotActions.Notifications.UserNotifications;
 using Discord.WebSocket;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 public class DiscordEventListener
 {
@@ -40,6 +42,7 @@ public class DiscordEventListener
         Client.UserLeft += OnUserLeftAsync;
         Client.UserBanned += OnUserBannedAsync;
         Client.UserUnbanned += OnUserUnBannedAsync;
+        Client.UserCommandExecuted += OnUserCommandAsync;
 
         return Task.CompletedTask;
     }
@@ -82,4 +85,7 @@ public class DiscordEventListener
 
     private Task OnUserUnBannedAsync(SocketUser arg1, SocketGuild arg2)
         => Mediator.Publish(new UserUnBannedNotification(arg1, arg2), CancellationToken);
+
+    private Task OnUserCommandAsync(SocketUserCommand arg)
+        => Mediator.Publish(new UserCommandNotification(arg), CancellationToken);
 }
