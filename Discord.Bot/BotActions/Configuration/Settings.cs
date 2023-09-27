@@ -11,5 +11,11 @@ public class Settings
     {
         [JsonPropertyName("Token")]
         public string BotToken { get; set; } = string.Empty;
+
+        [JsonPropertyName("SingleGuildOnly")]
+        public bool SingleGuildMode { get; set; }
+
+        [JsonPropertyName("GuildId")]
+        public string? GuildId { get; set; }
     }
 }
