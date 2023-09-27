@@ -21,6 +21,9 @@ public static class Bot
         await listener.StartAsync();
 
         var settings = JsonSerializer.Deserialize<Settings>(File.ReadAllText("appsettings.json"));
+        ArgumentNullException.ThrowIfNull(settings);
+        ArgumentException.ThrowIfNullOrEmpty(settings.Bot.BotToken);
+
         await client.LoginAsync(TokenType.Bot, settings.Bot.BotToken);
         await client.StartAsync();
 
