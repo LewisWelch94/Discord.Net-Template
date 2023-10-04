@@ -64,7 +64,7 @@ public class DiscordEventListener
 
         try
         {
-            var guild = client.GetGuild(1111219432870649878);
+            var guild = client.GetGuild(guildId);
             return guild;
         }
         catch (Exception e)
@@ -103,6 +103,12 @@ public class DiscordEventListener
     private Task OnUserJoinAsync(SocketGuildUser arg)
     {
         var client = Client;
+        if (Settings.Bot.SingleGuildMode)
+        {
+            if (arg.Guild != Guild) return null!;
+            return Mediator.Publish(new UserJoinNotification(arg, client), CancellationToken);
+        }
+
         return Mediator.Publish(new UserJoinNotification(arg, client), CancellationToken);
     }
 
@@ -117,4 +123,10 @@ public class DiscordEventListener
 
     private Task OnUserCommandAsync(SocketUserCommand arg)
         => Mediator.Publish(new UserCommandNotification(arg), CancellationToken);
+
+    private Task OnUserUpdatedAsync(SocketUser arg1, SocketUser arg2)
+    {
+        var client = Client;
+        return Mediator.Publish(new UserUpdatedNotification(arg1, arg2, client), CancellationToken);
+    }
 }

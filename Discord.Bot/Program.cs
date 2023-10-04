@@ -2,6 +2,8 @@
 
 using Discord.Bot.BotActions;
 using Discord.Bot.BotActions.Configuration;
+using Discord.Bot.BotActions.Helpers;
+using Discord.Bot.BotActions.Interfaces;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,6 +45,7 @@ public static class Bot
         }))
         .AddSingleton<DiscordEventListener>()
         .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
+        .AddScoped<ICacheHelper, CacheHelper>()
         .BuildServiceProvider();
     }
 
