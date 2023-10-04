@@ -76,10 +76,11 @@ public class DiscordEventListener
 
     private Task OnMessageReceivedAsync(SocketMessage arg)
     {
+        if (arg.Author.IsBot || arg.Author.IsWebhook) return Task.Run(() => Console.WriteLine(""));
         var channel = arg.Channel.GetType();
         var message = arg as SocketUserMessage;
         if (channel == typeof(SocketDMChannel)) return Mediator.Publish(new DMMessageReceivedNotification(message!), CancellationToken);
-        if (channel == typeof(SocketGuildChannel)) return Mediator.Publish(new MessageReceivedNotification(message!), CancellationToken);
+        if (channel == typeof(SocketTextChannel)) return Mediator.Publish(new MessageReceivedNotification(message!), CancellationToken);
         return Task.Run(() => Console.WriteLine(""));
     }
 
