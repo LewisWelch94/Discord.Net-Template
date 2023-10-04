@@ -1,5 +1,6 @@
 ﻿namespace Discord.Bot.BotActions;
 
+using Discord.Bot.BotActions.Models;
 using Discord.Bot.SlashCommands;
 using Discord.Bot.UserCommands;
 using Discord.Net;
@@ -9,76 +10,81 @@ using System;
 
 public static class RegisterSlashCommand
 {
-    public static async Task RegisterCommands(DiscordSocketClient client, SocketGuild? guild)
+    public static async Task<BotListing> RegisterCommands(DiscordSocketClient client, SocketGuild? guild, BotListing listing)
     {
-        var slashCommands = GetSlashCommands();
-        var userCommands = GetUserCommands();
-
-        List<ApplicationCommandProperties> commands = new List<ApplicationCommandProperties>();
-        await client.BulkOverwriteGlobalApplicationCommandsAsync(commands.ToArray());
-        foreach (var command in slashCommands)
+        try
         {
-            var newCommand = command.Build();
-            try
-            {
-                
-                
-                if (guild != null)
-                {
-                    await guild.BulkOverwriteApplicationCommandAsync(commands.ToArray());
-                    await guild.CreateApplicationCommandAsync(newCommand);
-                    Console.WriteLine($"{newCommand.Name} Slash command has been registered to {guild.Name}");
-                    continue;
-                }
+            var commands = GetCommands();
+            BotListing cache;
 
-                await client.CreateGlobalApplicationCommandAsync(newCommand);
-                Console.WriteLine($"{newCommand.Name} Slash command has been registered");
-            }
-            catch (HttpException e)
+            if(listing.BotInfos.Count != 0)
             {
-                var json = JsonConvert.SerializeObject(e.Errors, Formatting.Indented);
-                Console.WriteLine(json);
-                throw;
+                if (guild == null && listing.BotInfos[0].GuildId != null)
+                {
+                    var lastGuild = client.GetGuild((ulong)listing.BotInfos[0].GuildId!);
+                    await lastGuild.BulkOverwriteApplicationCommandAsync(Array.Empty<ApplicationCommandProperties>());
+                }
             }
+            
+            if (guild != null)
+            {
+                await guild.BulkOverwriteApplicationCommandAsync(Array.Empty<ApplicationCommandProperties>());
+                await guild.BulkOverwriteApplicationCommandAsync(commands.ToArray());
+                Console.WriteLine($"Slash commands has been registered to {guild.Name}");
+
+                cache = HandleCache(guild, listing);
+                return cache;
+            }
+
+            await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
+            await client.BulkOverwriteGlobalApplicationCommandsAsync(commands.ToArray());
+            Console.WriteLine("Slash commands has been registered");
+
+            cache = HandleCache(guild, listing);
+            return cache;
+
         }
-
-        foreach (var command in userCommands)
+        catch (HttpException e)
         {
-            var newCommand = command.Build();
-            try
-            {
-                if (guild != null)
-                {
-                    await guild.CreateApplicationCommandAsync(newCommand);
-                    Console.WriteLine($"{newCommand.Name} User command has been registered to {guild.Name}");
-                    continue;
-                }
-
-                await client.CreateGlobalApplicationCommandAsync(newCommand);
-                Console.WriteLine($"{newCommand.Name} User command has been registered");
-            }
-            catch (HttpException e)
-            {
-                var json = JsonConvert.SerializeObject(e.Errors, Formatting.Indented);
-                Console.WriteLine(json);
-                throw;
-            }
+            var json = JsonConvert.SerializeObject(e.Errors, Formatting.Indented);
+            Console.WriteLine(json);
+            throw;
         }
     }
 
-    private static List<SlashCommandBuilder> GetSlashCommands()
+    private static List<ApplicationCommandProperties> GetCommands()
     {
-        return new List<SlashCommandBuilder>()
+        return new List<ApplicationCommandProperties>()
         {
-            new TestSlashCommand().CreateSlashCommand(),
+            // Slash Commands
+            new TestSlashCommand().CreateSlashCommand().Build(),
+
+            // User Commands
+            new TestUserCommand().CreateUserCommand().Build(),
         };
     }
 
-    private static List<UserCommandBuilder> GetUserCommands()
+    private static BotListing HandleCache(SocketGuild? guild, BotListing listing)
     {
-        return new List<UserCommandBuilder>
+        if (guild != null)
         {
-            new TestUserCommand().CreateUserCommand(),
-        };
+            listing.BotInfos.Clear();
+            listing.BotInfos.Add(new BotListing.BotInfo
+            {
+                LastUsedInSoloGuildMode = true,
+                GuildId = guild.Id,
+            });
+
+            return listing;
+        }
+
+        listing.BotInfos.Clear();
+        listing.BotInfos.Add(new BotListing.BotInfo
+        {
+            LastUsedInSoloGuildMode = false,
+            GuildId = null,
+        });
+
+        return listing;
     }
 }
