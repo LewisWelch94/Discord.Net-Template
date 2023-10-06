@@ -2,6 +2,8 @@
 
 using Discord.Bot.BotActions;
 using Discord.Bot.BotActions.Configuration;
+using Discord.Bot.BotActions.Helpers;
+using Discord.Bot.BotActions.Interfaces;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +23,9 @@ public static class Bot
         await listener.StartAsync();
 
         var settings = JsonSerializer.Deserialize<Settings>(File.ReadAllText("appsettings.json"));
+        ArgumentNullException.ThrowIfNull(settings);
+        ArgumentException.ThrowIfNullOrEmpty(settings.Bot.BotToken);
+
         await client.LoginAsync(TokenType.Bot, settings.Bot.BotToken);
         await client.StartAsync();
 
@@ -35,11 +40,12 @@ public static class Bot
         {
             AlwaysDownloadUsers = true,
             MessageCacheSize = 100,
-            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent,
+            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers | GatewayIntents.GuildBans,
             LogLevel = LogSeverity.Info
         }))
         .AddSingleton<DiscordEventListener>()
         .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
+        .AddScoped<ICacheHelper, CacheHelper>()
         .BuildServiceProvider();
     }
 
